@@ -1,8 +1,9 @@
 function [A] = segment(A)
-%UNTITLED7 Summary of this function goes here
-%   Detailed explanation goes here
+%This function returns the segmented matrix of image, values greater than 0
+%gets the value 1 and 0 otherwise
+% Inputs : A : Image matrix
+% Outputs : Segmented Image
     A(A>0) = 1;
-    A(A<=0) = 0;
-    imshow(A,'InitialMagnification','fit');        
+    A(A<=0) = 0;      
 end
 
