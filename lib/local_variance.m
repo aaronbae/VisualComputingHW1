@@ -1,4 +1,4 @@
-function [output] = local_variance(A,t)
+function [output,t] = local_variance(A,Z,t)
 % Calculates the local variance of image matrix A and returns a new matrix
 % with variance value above threshold t
 % Inputs : 
@@ -8,15 +8,23 @@ function [output] = local_variance(A,t)
 %   output: matrix output with edge detected
 
     output = zeros(size(A));
+    var_zero = zeros(size(A));
     
-    a = padarray(A,[1,1],0)
-    mu = conv2(A,[1 1 1;1 1 1;1 1 1], 'same')/9;
-    mu2 = conv2(A^2,[1 1 1;1 1 1;1 1 1], 'same')/9;
-    
-    var = mu2 - mu^2;
-    
-    output(var>t) = 1;   
-    output = output(2:size(output)-1,2:size(output)-1)
-    
-end
+%     a = padarray(A,[1,1],0);
+%     mu = conv2(a,[1 1 1;1 1 1;1 1 1], 'same')/9;
+%     mu2 = conv2(a.^2,[1 1 1;1 1 1;1 1 1], 'same')/9;
+%     
+%     var = mu2 - mu.^2;
+%     var = var(2:size(var)-1,2:size(var)-1);
+%     
+    sdImage = stdfilt(A);
+    var = sdImage.^2;
+    size(var)
+    size(var_zero)
+    var_zero = var(Z==1);
+    %for t=[t1,t2,t3]
+    output(var_zero>t) = 1;   
+    output(var_zero<=t) = 0;    
+        %imshow(output)
+   % end
 

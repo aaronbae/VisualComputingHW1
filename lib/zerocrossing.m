@@ -10,7 +10,7 @@ function [mark] = zerocrossing(A)
    b = padarray(A,[1,1],1);
    mark = zeros(size(a,1),size(a,2));
 
-   I1 = conv2(a,[1,1,1;1,0,1;1,1,1],'same');
+   I1 = conv2(a,[1,1,1;1,1,1;1,1,1],'same');
    I2 = conv2(b,[1,1,1;1,1,1;1,1,1],'same');
   
    mark(I1>0 & I2<9) = 1;
