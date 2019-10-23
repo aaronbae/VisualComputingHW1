@@ -127,26 +127,26 @@ for j=1:length(image_files)
     
     img = im2double( imread( image_name ) ); 
 %     Iterate through until img dimensions become 1x1
-    for i=0:log2(size(img))
+    for i=0:0%log2(size(img))
         G = gaussian_pyramid(img, box_filter, i);
         
         Lop = imfilter(G,laplacian_op);
-        title_name = image_name + " Laplacian Operator Layer = " + num2str(i);
-        saveImage(Lop, "part3", title_name);
+        %title_name = image_name + " Laplacian Operator Layer = " + num2str(i);
+        %saveImage(Lop, "part3", title_name);
         
         S = segment(Lop);
-        title_name = image_name + " Segmented at Layer = " + num2str(i);
-        saveImage(S, "part3", title_name);
+        %title_name = image_name + " Segmented at Layer = " + num2str(i);
+        %saveImage(S, "part3", title_name);
         
         Z = zerocrossing(S)
-        title_name = image_name + " Zero-Crossing Layer = " + num2str(i);
-        saveImage(Z, "part3", title_name);
+        %title_name = image_name + " Zero-Crossing Layer = " + num2str(i);
+        %saveImage(Z, "part3", title_name);
+
         
-        for t=[0.001, 0.0001, 0.01]
-            LZ = local_variance(Z,t);
-            title_name = image_name + " Local variance Layer = " + num2str(i)+"_" + num2str(t);
-            saveImage(LZ, "part3", title_name);
-        end
+        LZ = local_variance(Lop,Z,0.001);
+        title_name = image_name + " Local variance threshold= 0.001 ";
+        saveImage(LZ, "part3", title_name);
+        
     end
 
 end
