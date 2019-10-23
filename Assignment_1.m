@@ -1,7 +1,11 @@
 clear all;
 addpath('lib');
 addpath('img');
-image_files = dir(fullfile('img','*.jpg'));
+files = dir(fullfile('img','*.jpg'));
+for i=1:length(files)
+    name = files(i).name;
+    image_files(i) = convertCharsToStrings(name);
+end
 
 %% Part 0. Getting Started - part a
 % Sort all the intensities in A, put the result in a single 
@@ -91,30 +95,26 @@ saveImage(B, "part0", "Cartoon with conv2 Filter");
 %% Part 1: Gaussian Pyramid
 box_filter = [1/4 1/4;1/4 1/4];
 % Iterate through all images
-for j=1:length(image_files)
-    image_name = image_files(j).name;
-
-    img = im2double( imread( image_name ) ); 
+for image_name=image_files
+    img = im2double( imread( convertStringsToChars(image_name) ) ); 
+    folder_name = "part1/" + image_name.replace(".jpg", "");
     % Iterate through until img dimensions become 1x1
     for i=0:log2(size(img))
         G = gaussian_pyramid(img, box_filter, i);
-        title_name = image_name + " Gaussian Pyramid Layer = " + num2str(i);
-        saveImage(G, "part1", title_name);
+        saveImage(G, folder_name, i, false);
     end
 
 end
 
 %% Part 2: Laplacian Pyramid
 % Iterate through all images
-for j=1:length(image_files)
-    image_name = image_files(j).name;
-    img = im2double( imread( image_name ) ); 
+for image_name=image_files
+    img = im2double( imread( convertStringsToChars(image_name) ) ); 
+    folder_name = "part2/" + image_name.replace(".jpg", "");
     % Iterate through until img dimensions become 1x1
     for i=1:log2(size(img))
         L = laplacian_pyramid(img, box_filter, i);
-        title_name = image_name + " Laplacian Pyramid Layer " + num2str(i);
-        saveImage(L, "part2", title_name);
-        exit(code)
+        saveImage(L, folder_name, i, false);
     end
 end
 
@@ -122,23 +122,18 @@ end
 laplacian_op = [-1/8 -1/8 -1/8; -1/8 1 -1/8; -1/8 -1/8 -1/8];
 
 % Iterate through all images
-for j=1:length(image_files)
-    image_name = image_files(j).name;
-    
-    img = im2double( imread( image_name ) ); 
+for image_name=[image_files(5)]
+%for image_name=image_files
+    img = im2double( imread( convertStringsToChars(image_name) ) ); 
+    folder_name = "part3/" + image_name.replace(".jpg", "");
     % Iterate through until img dimensions become 1x1
-    for i=1:1
-	%for i=0:log2(size(img))
+	for i=0:log2(size(img))
         G = gaussian_pyramid(img, box_filter, i);
         Lop = imfilter(G,laplacian_op); 
         S = segment(Lop);
         Z = zerocrossing(S);
-        
-        for t=[0.001, 0.0001, 0.01]
-            LZ = local_variance(Lop, Z,t);
-            title_name = image_name + " Local variance Layer " + num2str(i)+" with threshold " + num2str(t);
-            saveImage(LZ, "part3", title_name);
-        end
+        LZ = local_variance(Lop, Z);
+        saveImage(LZ, folder_name, i, false);
     end
 
 end
@@ -150,15 +145,15 @@ mask_filter = [zeros(img_size,img_size/2) ones(img_size,img_size/2)];
 
 % Show Filter
 saveImage(mask_filter, "part4", "Mask Filter");
-image_pairs = [3,5;3,7;4,3];
+image_pairs = [1,3;1,5;2,1];
 
 % Iterate through each image pair
 for i=1:length(image_pairs)
     p=image_pairs(i,:);
-    imgA_name = image_files(p(1)).name;
-    imgA = im2double(imread(imgA_name));
-    imgB_name = image_files(p(2)).name;
-    imgB = im2double(imread(imgB_name));
+    imgA_name = image_files(p(1));
+    imgA = im2double( imread( convertStringsToChars(imgA_name) ) ); 
+    imgB_name = image_files(p(2));
+    imgB = im2double( imread( convertStringsToChars(imgB_name) ) ); 
     final_image = zeros(size(imgA));
     
     % Iterate through until img dimensions become 1x1
